@@ -9,6 +9,9 @@ var CommentSchema = new Schema({
         minLength: 1,
         maxLength: 200,
     },
+    Picture: {
+        type: String,
+    },
     Author: {
         type: Schema.Types.ObjectId,
         ref: 'User',
