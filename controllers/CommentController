@@ -72,3 +72,40 @@ exports.delete_comment_delete = async (req, res, next) => {
             res.status(500).json({ msg: 'error' });
         });
 };
+
+/* put cmt like */
+exports.cmt_like_put = async (req, res, next) => {
+    try {
+        const currentUser = req.user;
+        const filter = { _id: req.params.cid };
+        const update = { Likes: currentUser };
+        const newCmt = await Comment.findOneAndUpdate(filter, update, {
+            returnOriginal: false,
+        });
+        //console.log(newCmt);
+        res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        res.status(400).json({ msg: 'error' });
+    }
+};
+
+/* put cmt unlike */
+exports.cmt_unlike_put = async (req, res, next) => {
+    try {
+        const currentUser = req.user;
+        const filter = { _id: req.params.cid };
+        const update = { $pull: { Likes: req.user.id } };
+        try {
+            const newCmt = await Comment.findOneAndUpdate(filter, update, {
+                returnOriginal: false,
+            });
+            //console.log(newCmt);
+            res.status(200).json({ msg: 'success' });
+        } catch (err) {
+            console.log(err);
+        }
+    } catch (err) {
+        //console.log(err);
+        res.status(400).json({ msg: 'error' });
+    }
+};

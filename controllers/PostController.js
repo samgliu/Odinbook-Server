@@ -72,7 +72,7 @@ exports.post_get = async (req, res, next) => {
 
 /* get delete */
 exports.post_delete = async (req, res, next) => {
-    console.log(req.user);
+    //console.log(req.user);
     if (req.user) {
         const newPosts = await Post.deleteOne({ _id: req.params.id })
             .then(function (err, results) {
@@ -84,5 +84,42 @@ exports.post_delete = async (req, res, next) => {
             });
     } else {
         res.status(401).json({ msg: 'unauthorized' });
+    }
+};
+
+/* put like */
+exports.like_put = async (req, res, next) => {
+    try {
+        const currentUser = req.user;
+        const filter = { _id: req.params.id };
+        const update = { Likes: currentUser };
+        const newPost = await Post.findOneAndUpdate(filter, update, {
+            returnOriginal: false,
+        });
+        //console.log(newPost);
+        res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        res.status(400).json({ msg: 'error' });
+    }
+};
+
+/* put unlike */
+exports.unlike_put = async (req, res, next) => {
+    try {
+        const currentUser = req.user;
+        const filter = { _id: req.params.id };
+        const update = { $pull: { Likes: req.user.id } };
+        try {
+            const newPost = await Post.findOneAndUpdate(filter, update, {
+                returnOriginal: false,
+            });
+            //console.log(newPost);
+            res.status(200).json({ msg: 'success' });
+        } catch (err) {
+            console.log(err);
+        }
+    } catch (err) {
+        //console.log(err);
+        res.status(400).json({ msg: 'error' });
     }
 };

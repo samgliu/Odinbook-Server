@@ -12,20 +12,28 @@ passport.use(
             usernameField: 'email',
             passwordField: 'password',
         },
-        function (email, password, cb) {
-            //this one is typically a DB call. Assume that the returned user object is pre-formatted and ready for storing in JWT
-            return User.findOne({ email, password })
-                .then((user) => {
-                    if (!user) {
-                        return cb(null, false, {
-                            message: 'Incorrect email or password.',
+        function (email, password, done) {
+            console.log('log in with: ' + email + ':' + password);
+            return User.findOne({ Email: email }, (err, user) => {
+                if (err) {
+                    return done(err);
+                }
+                if (!user) {
+                    return done(null, false, { message: 'Incorrect username' });
+                }
+                bcrypt.compare(password, user.Password, (err, res) => {
+                    if (res) {
+                        // passwords match! log user in
+
+                        return done(null, user);
+                    } else {
+                        // passwords do not match!
+                        return done(null, false, {
+                            message: 'Incorrect password',
                         });
                     }
-                    return cb(null, user, {
-                        message: 'Logged In Successfully',
-                    });
-                })
-                .catch((err) => cb(err));
+                });
+            });
         }
     )
 );

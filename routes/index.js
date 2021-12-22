@@ -1,12 +1,19 @@
 const express = require('express');
+const { body, check, validationResult } = require('express-validator');
 const router = express.Router();
 const userController = require('../controllers/UserController');
 const postController = require('../controllers/PostController');
 const commentController = require('../controllers/CommentController');
 const authMiddleware = require('../middleware/auth');
 const getUserMiddleware = require('../middleware/getUser');
+
 /* GET home page. */
-router.get('/', authMiddleware.verifyToken, userController.index_get);
+router.get(
+    '/',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.index_get
+);
 
 /* refresh new accessToken */
 router.get('/refreshNewAccessToken', userController.refreshNewAccessToken_get);
@@ -15,7 +22,14 @@ router.get('/refreshNewAccessToken', userController.refreshNewAccessToken_get);
 router.get('/signup', userController.signup_get);
 router.post('/signup', userController.signup_post);
 router.get('/signin', userController.signin_get);
-router.post('/signin', userController.signin_post);
+router.post(
+    '/signin',
+    [
+        body('email', 'Email required').isLength({ min: 3 }).escape(),
+        body('password', 'Password required').isLength({ min: 5 }).escape(),
+    ],
+    userController.signin_post
+);
 router.get('/logout', userController.logout_get);
 
 router.put(
@@ -27,7 +41,7 @@ router.put(
 );
 
 router.put(
-    // make friend with target id
+    // accept friend with target id
     '/:tid/accept-friend',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
@@ -58,6 +72,19 @@ router.delete(
     getUserMiddleware.getUser,
     postController.post_delete
 );
+/* post like put */
+router.put(
+    '/:id/like',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    postController.like_put
+);
+router.put(
+    '/:id/unlike',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    postController.unlike_put
+);
 
 /* Comment Routes */
 router.post(
@@ -71,6 +98,19 @@ router.delete(
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
     commentController.delete_comment_delete
+);
+/* comment like put */
+router.put(
+    '/:cid/cmt-like',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    commentController.cmt_like_put
+);
+router.put(
+    '/:cid/cmt-unlike',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    commentController.cmt_unlike_put
 );
 
 module.exports = router;

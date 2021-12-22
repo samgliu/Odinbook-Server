@@ -18,7 +18,11 @@ function getNewAccessToken(id) {
 exports.index_get = async (req, res, next) => {
     //console.log(req.decoded);
     const userData = await User.findById(req.decoded.id)
-        .populate('Friends', '-Password -Friends -FriendRequests')
+        .populate({
+            path: 'Friends',
+            populate: { path: 'Posts' },
+            select: '-Password -Friends -FriendRequests',
+        })
         .populate('FriendRequests', '-Password -Friends -FriendRequests')
         .populate('Posts');
     res.json(userData);
