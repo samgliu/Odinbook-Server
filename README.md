@@ -8,6 +8,7 @@
 
 -   chat
 -   picture upload
+-   personal profile page
 
 # Built With
 

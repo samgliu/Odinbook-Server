@@ -161,7 +161,7 @@ exports.signin_post = function (req, res, next) {
                         SameSite: 'Lax',
                     })
                     .status(200)
-                    .json({ accessToken: accessToken });
+                    .json({ accessToken: accessToken, user: user });
             }
         });
     })(req, res, next);
