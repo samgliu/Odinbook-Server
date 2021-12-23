@@ -73,7 +73,12 @@ exports.post_get = async (req, res, next) => {
 /* get delete */
 exports.post_delete = async (req, res, next) => {
     //console.log(req.user);
-    if (req.user) {
+    if (req.isOwner) {
+        const filter = { _id: req.user.id };
+        const update = { $pull: { Posts: req.params.id } };
+        const newUser = await User.findOneAndUpdate(filter, update, {
+            returnOriginal: false,
+        });
         const newPosts = await Post.deleteOne({ _id: req.params.id })
             .then(function (err, results) {
                 Comment.deleteMany({ Post: req.params.id }).exec();

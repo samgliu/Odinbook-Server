@@ -7,8 +7,6 @@
 # TODO List
 
 -   chat
--   search user
--   check delete auth: try add Author in filter field
 -   profile edit
 -   picture upload
 

@@ -6,7 +6,8 @@ const postController = require('../controllers/PostController');
 const commentController = require('../controllers/CommentController');
 const authMiddleware = require('../middleware/auth');
 const getUserMiddleware = require('../middleware/getUser');
-
+const postAuthValidatorMiddleware = require('../middleware/postAuthValidator');
+const cmtAuthValidatorMiddlerware = require('../middleware/cmtAuthValidator');
 /* GET home page. */
 router.get(
     '/',
@@ -31,6 +32,12 @@ router.post(
     userController.signin_post
 );
 router.get('/logout', userController.logout_get);
+router.get(
+    '/user-search',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.user_search_get
+);
 
 router.put(
     // make friend with target id
@@ -70,6 +77,7 @@ router.delete(
     '/:id/delete',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
+    postAuthValidatorMiddleware.postAuthValidator,
     postController.post_delete
 );
 /* post like put */
@@ -97,6 +105,7 @@ router.delete(
     '/:id/comment/:cid/delete',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
+    cmtAuthValidatorMiddlerware.cmtAuthValidator,
     commentController.delete_comment_delete
 );
 /* comment like put */

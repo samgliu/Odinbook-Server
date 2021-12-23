@@ -216,3 +216,27 @@ exports.friend_accept_put = async (req, res, next) => {
         res.status(400).json({ msg: 'error' });
     }
 };
+
+exports.user_search_get = [
+    // Validate and sanitize the name field.
+    check('searchkey', 'Content required').trim().isLength({ min: 1 }).escape(),
+
+    async (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(500).json({ msg: 'validation error' });
+        } else {
+            const searchkey = req.query.searchkey;
+            const userData = await User.find(
+                { Username: { $regex: `${searchkey}`, $options: 'i' } },
+                (err, docs) => {
+                    if (err) {
+                        res.status(404).json(err);
+                    } else {
+                        res.status(200).json(docs);
+                    }
+                }
+            ).clone();
+        }
+    },
+];
