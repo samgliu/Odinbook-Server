@@ -38,7 +38,6 @@ router.get(
     getUserMiddleware.getUser,
     userController.user_search_get
 );
-
 router.put(
     // make friend with target id
     '/:tid/request-friend',
@@ -46,13 +45,24 @@ router.put(
     getUserMiddleware.getUser,
     userController.friend_request_put
 );
-
 router.put(
     // accept friend with target id
     '/:tid/accept-friend',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
     userController.friend_accept_put
+);
+router.put(
+    '/update',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.update_put
+);
+router.post(
+    '/upload',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.upload_post
 );
 
 /* Post Routes */

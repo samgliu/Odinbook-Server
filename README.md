@@ -7,7 +7,6 @@
 # TODO List
 
 -   chat
--   profile edit
 -   picture upload
 
 # Built With
@@ -15,12 +14,14 @@
 -   Node.js
 -   Express
 -   passportJS
+-   mongoDB
 
 # Feature:
 
 -   sign up/in/out
--   Post/Comment/Like
+-   Post/Comment/Like add/delete with picture
 -   Friend with other user
+-   Profile Edit
 
 # config:
 

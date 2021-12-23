@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const refreshTokenList = {};
+const fileUpload = require('express-fileupload');
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 function getNewAccessToken(id) {
@@ -240,3 +242,120 @@ exports.user_search_get = [
         }
     },
 ];
+
+exports.update_put = [
+    // Validate and sanitize the name field.
+    body('firstname', 'Firstname required')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('lastname', 'Lastname required').trim().isLength({ min: 1 }).escape(),
+    body('username').custom((value, { req }) => {
+        // verify email existence
+        return new Promise((resolve, reject) => {
+            User.findOne({ Username: req.body.username }, function (err, user) {
+                if (err) {
+                    reject(new Error('Server Error'));
+                }
+                if (Boolean(user) && String(user._id) != String(req.user._id)) {
+                    reject(new Error('Username already in use'));
+                }
+                resolve(true);
+            });
+        });
+    }),
+    body('email').custom((value, { req }) => {
+        // verify email existence
+        return new Promise((resolve, reject) => {
+            User.findOne({ Email: req.body.email }, function (err, user) {
+                if (err) {
+                    reject(new Error('Server Error'));
+                }
+                if (Boolean(user) && String(user._id) != String(req.user._id)) {
+                    reject(new Error('E-mail already in use'));
+                }
+                resolve(true);
+            });
+        });
+    }),
+    body('password', 'Password required').isLength({ min: 5 }).escape(),
+    body('confirm').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Password confirmation does not match! Try again.');
+        }
+        return true;
+    }),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json(errors);
+        } else {
+            if (req.user == undefined) {
+                // res.status(401).json({ msg: 'unauthorized' });
+            }
+
+            bcrypt.hash(req.body.password, 8, async (err, hashedPassword) => {
+                // if err, do something
+                // otherwise, store hashedPassword in DB
+                if (err) {
+                    res.status(500).json({ msg: 'error' });
+                }
+                const avatar = req.body.avatar
+                    ? req.body.avatar
+                    : req.user.Avatar;
+                User.findOneAndUpdate(
+                    { _id: req.user._id },
+                    {
+                        $set: {
+                            Firstname: req.body.firstname,
+                            Lastname: req.body.lastname,
+                            Username: req.body.username,
+                            Password: hashedPassword,
+                            Email: req.body.email,
+                            Avatar: avatar,
+                        },
+                    },
+                    (err, data) => {
+                        if (err) {
+                            //omit
+                        } else {
+                            res.status(200).json('success'); // success
+                        }
+                    }
+                );
+            });
+        }
+    },
+];
+
+//FIXME haven't test
+exports.upload_post = async (req, res, next) => {
+    try {
+        if (!req.files) {
+            res.send({
+                status: false,
+                message: 'No file uploaded',
+            });
+        } else {
+            //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+            let avatar = req.files.avatar;
+            let fileName = uuidv4() + avatar.name;
+            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            avatar.mv('../public/uploads/' + fileName);
+
+            //send response
+            res.send({
+                status: true,
+                message: 'File is uploaded',
+                data: {
+                    name: fileName,
+                    mimetype: avatar.mimetype,
+                    size: avatar.size,
+                },
+            });
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+};
