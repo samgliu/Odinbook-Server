@@ -13,7 +13,7 @@ passport.use(
             passwordField: 'password',
         },
         function (email, password, done) {
-            console.log('log in with: ' + email + ':' + password);
+            //console.log('log in with: ' + email + ':' + password);
             return User.findOne({ Email: email }, (err, user) => {
                 if (err) {
                     return done(err);

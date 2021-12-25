@@ -42,6 +42,12 @@ var UserSchema = new Schema({
         },
     ],
     FriendRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    receivedPosts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Post',
+        },
+    ],
     Posts: [
         {
             type: Schema.Types.ObjectId,

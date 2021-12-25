@@ -11,9 +11,16 @@ const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 function getNewAccessToken(id) {
-    return jwt.sign({ id: id }, process.env.ACCESS_TOKEN_KEY, {
-        expiresIn: +process.env.ACCESS_TOKEN_TIME,
-    });
+    return jwt.sign(
+        { id: id },
+        process.env.ACCESS_TOKEN_KEY,
+        {
+            expiresIn: +process.env.ACCESS_TOKEN_TIME,
+        },
+        {
+            algorithms: ['sha1', 'RS256', 'HS256'],
+        }
+    );
 }
 
 /* index_get */
@@ -22,26 +29,56 @@ exports.index_get = async (req, res, next) => {
     const userData = await User.findById(req.decoded.id)
         .populate({
             path: 'Friends',
-            populate: { path: 'Posts' },
+            //populate: { path: 'Posts' },
             select: '-Password -Friends -FriendRequests',
         })
-        .populate('FriendRequests', '-Password -Friends -FriendRequests')
-        .populate('Posts');
+        .populate('FriendRequests', '-Password -Friends -FriendRequests');
+    //.populate('Posts');
     res.json(userData);
 };
 
 /* refreshNewAccessToken_get */
 exports.refreshNewAccessToken_get = (req, res, next) => {
     try {
-        const rToken = req.cookies['refreshToken'];
+        /*
+        const rToken = req.refreshToken;
+        console.log(rToken);
         const decoded = jwt.verify(rToken, process.env.REFRESH_TOKEN_KEY);
-        //console.log(decoded.id);
+        console.log(decoded);*/
+        const decoded = req.decoded;
         const newToken = getNewAccessToken(decoded.id);
         res.json({ accessToken: newToken });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         res.status(401).json({ msg: 'Invalid refresh token' });
     }
+};
+
+/* profile_get */
+exports.profile_get = async (req, res, next) => {
+    //console.log(req.decoded);
+    const userProfileData = await User.findOne({
+        Username: req.params.username,
+    })
+        .populate({
+            path: 'receivedPosts',
+            populate: {
+                path: 'Author',
+                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+            },
+            select: '-Password -Friends -FriendRequests',
+        })
+        .populate({
+            path: 'Posts',
+            populate: {
+                path: 'Author',
+                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+            },
+            select: '-Password -Friends -FriendRequests',
+        });
+    //.populate('Posts');
+    //console.log(userProfileData);
+    res.json(userProfileData);
 };
 
 /* sign_up */
@@ -140,41 +177,53 @@ exports.signin_post = function (req, res, next) {
         }
         req.logIn(user, function (err) {
             if (err) {
+                console.log(err);
                 return next(err);
             } else {
                 //console.log(user._id);
                 const refreshToken = jwt.sign(
                     { id: user._id },
                     process.env.REFRESH_TOKEN_KEY,
-                    { expiresIn: +process.env.REFRESH_TOKEN_TIME }
+                    { expiresIn: +process.env.REFRESH_TOKEN_TIME },
+                    { algorithms: ['sha1', 'RS256', 'HS256'] }
                 );
                 const accessToken = jwt.sign(
                     { id: user._id },
                     process.env.ACCESS_TOKEN_KEY,
-                    { expiresIn: +process.env.ACCESS_TOKEN_TIME }
+                    { expiresIn: +process.env.ACCESS_TOKEN_TIME },
+                    { algorithms: ['sha1', 'RS256', 'HS256'] }
                 );
                 refreshTokenList[refreshToken] = user._id;
                 return res
                     .cookie('refreshToken', refreshToken, {
-                        Secure: true,
-                        HttpOnly: true,
-                        SameSite: 'Lax',
+                        secure: true,
+                        httpOnly: true,
+                        sameSite: 'None',
                     })
                     .status(200)
-                    .json({ accessToken: accessToken, user: user });
+                    .json({
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        user: user,
+                    });
             }
         });
     })(req, res, next);
 };
 
 exports.logout_get = (req, res) => {
-    const logoutToken = jwt.sign({ id: '' }, process.env.REFRESH_TOKEN_KEY, {
-        expiresIn: -1,
-    });
+    const logoutToken = jwt.sign(
+        { id: '' },
+        process.env.REFRESH_TOKEN_KEY,
+        {
+            expiresIn: -1,
+        },
+        { algorithms: ['sha1', 'RS256', 'HS256'] }
+    );
     res.cookie('refreshToken', logoutToken, {
         Secure: true,
         HttpOnly: true,
-        SameSite: 'Lax',
+        SameSite: 'None',
     })
         .status(200)
         .json('cookie cleared');

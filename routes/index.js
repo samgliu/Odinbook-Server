@@ -5,6 +5,7 @@ const userController = require('../controllers/UserController');
 const postController = require('../controllers/PostController');
 const commentController = require('../controllers/CommentController');
 const authMiddleware = require('../middleware/auth');
+const refreshAuthMiddleware = require('../middleware/refreshTokenAuth');
 const getUserMiddleware = require('../middleware/getUser');
 const postAuthValidatorMiddleware = require('../middleware/postAuthValidator');
 const cmtAuthValidatorMiddlerware = require('../middleware/cmtAuthValidator');
@@ -17,9 +18,20 @@ router.get(
 );
 
 /* refresh new accessToken */
-router.get('/refreshNewAccessToken', userController.refreshNewAccessToken_get);
+router.get(
+    '/refreshNewAccessToken',
+    refreshAuthMiddleware.refreshTokenAuth,
+    userController.refreshNewAccessToken_get
+);
 
 /* User Routes */
+/* GET profile page. */
+router.get(
+    '/:username/profile',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.profile_get
+);
 router.get('/signup', userController.signup_get);
 router.post('/signup', userController.signup_post);
 router.get('/signin', userController.signin_get);
@@ -67,12 +79,24 @@ router.post(
 
 /* Post Routes */
 router.get(
+    '/posts',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    postController.posts_get
+);
+router.get(
     '/create-post',
     authMiddleware.verifyToken,
     postController.create_post_get
 );
 router.post(
-    '/create-post',
+    '/create-post-self',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    postController.create_post_self_post
+);
+router.post(
+    '/:targetUsername/create-post',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
     postController.create_post_post

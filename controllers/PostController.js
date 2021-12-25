@@ -9,12 +9,48 @@ const cookieParser = require('cookie-parser');
 const refreshTokenList = {};
 require('dotenv').config();
 
+/* userself posts get */
+exports.posts_get = async (req, res, next) => {
+    const userData = await User.findById(req.decoded.id)
+        .populate({
+            path: 'Friends',
+            populate: {
+                path: 'Posts',
+                populate: {
+                    path: 'Author',
+                    select: '-Password -Friends -FriendRequests -Posts',
+                },
+                select: '-Password -Friends -FriendRequests',
+            },
+            select: '-Password -Friends -FriendRequests',
+        })
+        .populate('FriendRequests', '-Password -Friends -FriendRequests')
+        .populate({
+            path: 'receivedPosts',
+            populate: {
+                path: 'Author',
+                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+            },
+            select: '-Password -Friends -FriendRequests',
+        })
+        .populate({
+            path: 'Posts',
+            populate: {
+                path: 'Author',
+                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+            },
+            select: '-Password -Friends -FriendRequests',
+        });
+    res.json(userData);
+};
+
 /* create new */
 exports.create_post_get = function (req, res, next) {
     res.json('create_post_get');
 };
 
-exports.create_post_post = [
+/* create post under userself */
+exports.create_post_self_post = [
     // Validate and sanitize the name field.
     body('content', 'Content required').isLength({ min: 1 }).escape(),
     body('picture').escape(),
@@ -34,6 +70,7 @@ exports.create_post_post = [
                 const post = new Post({
                     Content: req.body.content,
                     Author: req.user,
+                    TargetUser: req.user,
                     Picture: picture,
                     Timestamp: new Date(),
                     Comments: [],
@@ -46,7 +83,62 @@ exports.create_post_post = [
                             { $push: { Posts: rest } },
                             { returnOriginal: false }
                         ).populate('Posts');
-                        res.status(200).json(newUser);
+                        res.status(200).json(rest);
+                    }
+                });
+            } catch (err) {
+                res.status(401).send('Invalid Token');
+            }
+        }
+    },
+];
+
+/* create post under target user */
+exports.create_post_post = [
+    // Validate and sanitize the name field.
+    check('targetUsername', 'Target Username required')
+        .isLength({ min: 1 })
+        .escape(),
+    body('content', 'Content required').isLength({ min: 1 }).escape(),
+    body('picture').escape(),
+
+    async (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(500).json({ msg: 'error' });
+        } else {
+            try {
+                //user = await User.findOne({ _id: req.decoded.id });
+                //if (user == undefined) {
+                //    console.log('unauthorized');
+                //res.status(401).json({ msg: 'unauthorized' });
+                //}
+                const target = await User.findOne({
+                    Username: req.params.targetUsername,
+                });
+                const picture = req.body.picture ? req.body.picture : '';
+                const post = new Post({
+                    Content: req.body.content,
+                    Author: req.user,
+                    TargetUser: target,
+                    Picture: picture,
+                    Timestamp: new Date(),
+                    Comments: [],
+                }).save(async (err, rest) => {
+                    if (err) {
+                        res.status(500).json({ msg: 'error' });
+                    } else {
+                        const newUser = await User.findOneAndUpdate(
+                            { _id: req.user.id },
+                            { $push: { Posts: rest } },
+                            { returnOriginal: false }
+                        ).populate('Posts');
+                        const newTargetUser = await User.findOneAndUpdate(
+                            { Username: req.params.targetUsername },
+                            { $push: { receivedPosts: rest } },
+                            { returnOriginal: false }
+                        ).populate('Posts');
+                        res.status(200).json(rest);
                     }
                 });
             } catch (err) {

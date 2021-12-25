@@ -14,6 +14,11 @@ var PostSchema = new Schema({
         ref: 'User',
         required: true,
     },
+    TargetUser: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     Picture: {
         type: String,
     },
