@@ -49,7 +49,7 @@ exports.create_comment_post = [
     },
 ];
 
-/* verify homepage single comment auth*/
+/*  homepage single comment verify auth*/
 exports.comment_auth_get = async (req, res, next) => {
     try {
         res.status(200).json('authorized');
@@ -60,6 +60,43 @@ exports.comment_auth_get = async (req, res, next) => {
 
 /*  homepage single comment delete */
 exports.delete_comment_delete = async (req, res, next) => {
+    //const comment = await Comment.findById(req.params.cid).exec();
+    if (req.isAuth) {
+        Comment.deleteOne({ _id: req.params.cid }).then(async () => {
+            const filter = { _id: req.params.id };
+            const update = { $pull: { Comments: req.params.cid } };
+            try {
+                await Post.findOneAndUpdate(filter, update, {
+                    returnOriginal: false,
+                }).then(() => {
+                    res.status(200).json({
+                        msg: 'comment delete successful', // Success
+                    });
+                });
+            } catch (err) {
+                res.status(400).json({
+                    msg: 'error',
+                });
+            }
+        });
+    } else {
+        res.status(401).json({
+            msg: 'error',
+        });
+    }
+};
+
+/*  profile single comment verify auth*/
+exports.profile_comment_auth_get = async (req, res, next) => {
+    try {
+        res.status(200).json('authorized');
+    } catch (err) {
+        res.status(401).json({ msg: 'Not authorized' });
+    }
+};
+
+/*  profile single comment delete */
+exports.profile_delete_comment_delete = async (req, res, next) => {
     //const comment = await Comment.findById(req.params.cid).exec();
     if (req.isAuth) {
         Comment.deleteOne({ _id: req.params.cid }).then(async () => {

@@ -32,6 +32,16 @@ exports.posts_get = async (req, res, next) => {
                             {
                                 path: 'Likes',
                             },
+                            {
+                                path: 'Post',
+                                populate: [
+                                    {
+                                        path: 'Author',
+                                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                    },
+                                ],
+                                select: 'Author',
+                            },
                         ],
                     },
                     {
@@ -60,6 +70,16 @@ exports.posts_get = async (req, res, next) => {
                         {
                             path: 'Likes',
                         },
+                        {
+                            path: 'Post',
+                            populate: [
+                                {
+                                    path: 'Author',
+                                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                },
+                            ],
+                            select: 'Author',
+                        },
                     ],
                 },
                 {
@@ -84,6 +104,16 @@ exports.posts_get = async (req, res, next) => {
                         },
                         {
                             path: 'Likes',
+                        },
+                        {
+                            path: 'Post',
+                            populate: [
+                                {
+                                    path: 'Author',
+                                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                },
+                            ],
+                            select: 'Author',
                         },
                     ],
                 },

@@ -161,7 +161,7 @@ router.post(
     commentController.create_comment_post
 );
 
-// only for homepage post's comment verification
+// only for homepage post's comment verification and deletion
 router.get(
     '/:id/comment/:cid/cmt-auth',
     authMiddleware.verifyToken,
@@ -175,6 +175,21 @@ router.delete(
     getUserMiddleware.getUser,
     cmtAuthValidatorMiddlerware.cmtAuthValidator,
     commentController.delete_comment_delete
+);
+// only for profile page post's comment verification and deletion
+router.get(
+    '/:username/:id/comment/:cid/profile-cmt-auth',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    cmtAuthValidatorMiddlerware.cmtAuthValidator,
+    commentController.profile_comment_auth_get
+);
+router.delete(
+    '/:username/:id/comment/:cid/profile-delete',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    cmtAuthValidatorMiddlerware.cmtAuthValidator,
+    commentController.profile_delete_comment_delete
 );
 
 /* comment like put */

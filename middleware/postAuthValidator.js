@@ -16,7 +16,7 @@ exports.postAuthValidator = async (req, res, next) => {
         }
     } catch (err) {
         //console.log(err);
-        return res.status(404).json('error');
+        return res.status(401).json('Not authorized');
     }
     req.isOwner = true;
     return next();
@@ -41,7 +41,7 @@ exports.profilePostAuthValidator = async (req, res, next) => {
         }
     } catch (err) {
         //console.log(err);
-        return res.status(404).json('error');
+        return res.status(401).json('Not authorized');
     }
     req.isOwner = true;
     return next();

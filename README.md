@@ -7,8 +7,11 @@
 # TODO List
 
 -   chat
+-   Avatar upload
 -   picture upload
--   personal profile page
+-   friend application
+-   like
+-   notification
 
 # Built With
 
