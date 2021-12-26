@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const Like = require('../models/like');
 const { body, check, validationResult } = require('express-validator');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
@@ -62,18 +63,52 @@ exports.profile_get = async (req, res, next) => {
     })
         .populate({
             path: 'receivedPosts',
-            populate: {
-                path: 'Author',
-                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
-            },
+            populate: [
+                {
+                    path: 'Author',
+                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                },
+                {
+                    path: 'Comments',
+                    populate: [
+                        {
+                            path: 'Author',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                        {
+                            path: 'Likes',
+                        },
+                    ],
+                },
+                {
+                    path: 'Likes',
+                },
+            ],
             select: '-Password -Friends -FriendRequests',
         })
         .populate({
             path: 'Posts',
-            populate: {
-                path: 'Author',
-                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
-            },
+            populate: [
+                {
+                    path: 'Author',
+                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                },
+                {
+                    path: 'Comments',
+                    populate: [
+                        {
+                            path: 'Author',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                        {
+                            path: 'Likes',
+                        },
+                    ],
+                },
+                {
+                    path: 'Likes',
+                },
+            ],
             select: '-Password -Friends -FriendRequests',
         });
     //.populate('Posts');

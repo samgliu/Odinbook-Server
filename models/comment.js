@@ -25,7 +25,7 @@ var CommentSchema = new Schema({
     Likes: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Like',
         },
     ],
     Timestamp: {

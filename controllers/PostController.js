@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const Like = require('../models/like');
 const Comment = require('../models/comment');
 const { body, check, validationResult } = require('express-validator');
 const passport = require('passport');
@@ -16,10 +17,27 @@ exports.posts_get = async (req, res, next) => {
             path: 'Friends',
             populate: {
                 path: 'Posts',
-                populate: {
-                    path: 'Author',
-                    select: '-Password -Friends -FriendRequests -Posts',
-                },
+                populate: [
+                    {
+                        path: 'Author',
+                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                    },
+                    {
+                        path: 'Comments',
+                        populate: [
+                            {
+                                path: 'Author',
+                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                            },
+                            {
+                                path: 'Likes',
+                            },
+                        ],
+                    },
+                    {
+                        path: 'Likes',
+                    },
+                ],
                 select: '-Password -Friends -FriendRequests',
             },
             select: '-Password -Friends -FriendRequests',
@@ -27,18 +45,53 @@ exports.posts_get = async (req, res, next) => {
         .populate('FriendRequests', '-Password -Friends -FriendRequests')
         .populate({
             path: 'receivedPosts',
-            populate: {
-                path: 'Author',
-                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
-            },
+            populate: [
+                {
+                    path: 'Author',
+                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                },
+                {
+                    path: 'Comments',
+                    populate: [
+                        {
+                            path: 'Author',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                        {
+                            path: 'Likes',
+                        },
+                    ],
+                },
+                {
+                    path: 'Likes',
+                },
+            ],
             select: '-Password -Friends -FriendRequests',
         })
         .populate({
             path: 'Posts',
-            populate: {
-                path: 'Author',
-                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
-            },
+            populate: [
+                {
+                    path: 'Author',
+                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                },
+                {
+                    path: 'Comments',
+                    populate: [
+                        {
+                            path: 'Author',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                        {
+                            path: 'Likes',
+                        },
+                    ],
+                },
+                {
+                    path: 'Likes',
+                },
+            ],
+
             select: '-Password -Friends -FriendRequests',
         });
     res.json(userData);
@@ -128,11 +181,12 @@ exports.create_post_post = [
                     if (err) {
                         res.status(500).json({ msg: 'error' });
                     } else {
+                        /* // update self posts
                         const newUser = await User.findOneAndUpdate(
                             { _id: req.user.id },
                             { $push: { Posts: rest } },
                             { returnOriginal: false }
-                        ).populate('Posts');
+                        ).populate('Posts');*/
                         const newTargetUser = await User.findOneAndUpdate(
                             { Username: req.params.targetUsername },
                             { $push: { receivedPosts: rest } },
@@ -157,6 +211,15 @@ exports.post_get = async (req, res, next) => {
             .populate('Likes')
             .sort({ Timestamp: -1 });
         res.json(post);
+    } catch (err) {
+        res.status(404).json({ msg: 'Not Found' });
+    }
+};
+
+/* verify homepage single post auth*/
+exports.post_auth_get = async (req, res, next) => {
+    try {
+        res.status(200).json('authorized');
     } catch (err) {
         res.status(404).json({ msg: 'Not Found' });
     }

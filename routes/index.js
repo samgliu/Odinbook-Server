@@ -107,11 +107,36 @@ router.get(
     getUserMiddleware.getUser,
     postController.post_get
 );
+// only for homepage post verification
+router.get(
+    '/:id/auth',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    postAuthValidatorMiddleware.postAuthValidator,
+    postController.post_auth_get
+);
 router.delete(
     '/:id/delete',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
     postAuthValidatorMiddleware.postAuthValidator,
+    postController.post_delete
+);
+// only for profile post verification
+router.get(
+    '/:username/:id/profile-post-auth',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    getUserMiddleware.getTargetUser,
+    postAuthValidatorMiddleware.profilePostAuthValidator,
+    postController.post_auth_get
+);
+router.delete(
+    '/:username/:id/profile-post-delete',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    getUserMiddleware.getTargetUser,
+    postAuthValidatorMiddleware.profilePostAuthValidator,
     postController.post_delete
 );
 /* post like put */
@@ -135,6 +160,15 @@ router.post(
     getUserMiddleware.getUser,
     commentController.create_comment_post
 );
+
+// only for homepage post's comment verification
+router.get(
+    '/:id/comment/:cid/cmt-auth',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    cmtAuthValidatorMiddlerware.cmtAuthValidator,
+    commentController.comment_auth_get
+);
 router.delete(
     '/:id/comment/:cid/delete',
     authMiddleware.verifyToken,
@@ -142,6 +176,7 @@ router.delete(
     cmtAuthValidatorMiddlerware.cmtAuthValidator,
     commentController.delete_comment_delete
 );
+
 /* comment like put */
 router.put(
     '/:cid/cmt-like',

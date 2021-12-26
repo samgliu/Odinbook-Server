@@ -14,3 +14,17 @@ exports.getUser = async (req, res, next) => {
     }
     return next();
 };
+
+exports.getTargetUser = async (req, res, next) => {
+    const username = req.params.username;
+
+    try {
+        const userProfileData = await User.findOne({
+            Username: username,
+        });
+        req.targetUser = userProfileData;
+    } catch (err) {
+        return res.status(404).send('not found');
+    }
+    return next();
+};
