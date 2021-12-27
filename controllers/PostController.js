@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const Post = require('../models/post');
-const Like = require('../models/like');
 const Comment = require('../models/comment');
 const { body, check, validationResult } = require('express-validator');
 const passport = require('passport');
@@ -31,6 +30,7 @@ exports.posts_get = async (req, res, next) => {
                             },
                             {
                                 path: 'Likes',
+                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
                             },
                             {
                                 path: 'Post',
@@ -46,6 +46,7 @@ exports.posts_get = async (req, res, next) => {
                     },
                     {
                         path: 'Likes',
+                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
                     },
                 ],
                 select: '-Password -Friends -FriendRequests',
@@ -69,6 +70,7 @@ exports.posts_get = async (req, res, next) => {
                         },
                         {
                             path: 'Likes',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
                         },
                         {
                             path: 'Post',
@@ -84,6 +86,7 @@ exports.posts_get = async (req, res, next) => {
                 },
                 {
                     path: 'Likes',
+                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
                 },
             ],
             select: '-Password -Friends -FriendRequests',
@@ -104,6 +107,7 @@ exports.posts_get = async (req, res, next) => {
                         },
                         {
                             path: 'Likes',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
                         },
                         {
                             path: 'Post',
@@ -119,6 +123,7 @@ exports.posts_get = async (req, res, next) => {
                 },
                 {
                     path: 'Likes',
+                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
                 },
             ],
 
@@ -277,8 +282,8 @@ exports.post_delete = async (req, res, next) => {
     }
 };
 
-/* put like */
-exports.like_put = async (req, res, next) => {
+/* post put like */
+exports.like_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.id };
@@ -294,7 +299,7 @@ exports.like_put = async (req, res, next) => {
 };
 
 /* put unlike */
-exports.unlike_put = async (req, res, next) => {
+exports.unlike_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.id };

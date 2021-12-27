@@ -140,17 +140,17 @@ router.delete(
     postController.post_delete
 );
 /* post like put */
-router.put(
+router.get(
     '/:id/like',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    postController.like_put
+    postController.like_get
 );
-router.put(
+router.get(
     '/:id/unlike',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    postController.unlike_put
+    postController.unlike_get
 );
 
 /* Comment Routes */
@@ -193,17 +193,17 @@ router.delete(
 );
 
 /* comment like put */
-router.put(
+router.get(
     '/:cid/cmt-like',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    commentController.cmt_like_put
+    commentController.cmt_like_get
 );
-router.put(
+router.get(
     '/:cid/cmt-unlike',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    commentController.cmt_unlike_put
+    commentController.cmt_unlike_get
 );
 
 module.exports = router;

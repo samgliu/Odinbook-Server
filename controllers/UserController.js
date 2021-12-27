@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const Post = require('../models/post');
-const Like = require('../models/like');
 const { body, check, validationResult } = require('express-validator');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');

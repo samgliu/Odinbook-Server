@@ -1,6 +1,5 @@
 const Post = require('../models/post');
 const User = require('../models/user');
-const Like = require('../models/like');
 const Comment = require('../models/comment');
 const { check, body, validationResult } = require('express-validator');
 const passport = require('passport');
@@ -124,7 +123,7 @@ exports.profile_delete_comment_delete = async (req, res, next) => {
 };
 
 /* put cmt like */
-exports.cmt_like_put = async (req, res, next) => {
+exports.cmt_like_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.cid };
@@ -140,7 +139,7 @@ exports.cmt_like_put = async (req, res, next) => {
 };
 
 /* put cmt unlike */
-exports.cmt_unlike_put = async (req, res, next) => {
+exports.cmt_unlike_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.cid };

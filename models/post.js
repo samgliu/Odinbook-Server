@@ -31,7 +31,7 @@ var PostSchema = new Schema({
     Likes: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Like',
+            ref: 'User',
         },
     ],
     Timestamp: {
