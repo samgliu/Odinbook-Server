@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const refreshTokenList = {};
-const fileUpload = require('express-fileupload');
+const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
@@ -401,7 +401,7 @@ exports.update_put = [
             });
         });
     }),
-    body('password', 'Password required').isLength({ min: 5 }).escape(),
+    body('password', 'Password required').escape(),
     body('confirm').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Password confirmation does not match! Try again.');
@@ -427,35 +427,60 @@ exports.update_put = [
                 const avatar = req.body.avatar
                     ? req.body.avatar
                     : req.user.Avatar;
-                User.findOneAndUpdate(
-                    { _id: req.user._id },
-                    {
-                        $set: {
-                            Firstname: req.body.firstname,
-                            Lastname: req.body.lastname,
-                            Username: req.body.username,
-                            Password: hashedPassword,
-                            Email: req.body.email,
-                            Avatar: avatar,
+                if (req.body.password) {
+                    User.findOneAndUpdate(
+                        { _id: req.user._id },
+                        {
+                            $set: {
+                                Firstname: req.body.firstname,
+                                Lastname: req.body.lastname,
+                                Username: req.body.username,
+                                Password: hashedPassword,
+                                Email: req.body.email,
+                                Avatar: avatar,
+                            },
                         },
-                    },
-                    (err, data) => {
-                        if (err) {
-                            //omit
-                        } else {
-                            res.status(200).json('success'); // success
+                        (err, data) => {
+                            if (err) {
+                                //omit
+                            } else {
+                                res.status(200).json(data); // success
+                            }
                         }
-                    }
-                );
+                    );
+                } else {
+                    User.findOneAndUpdate(
+                        { _id: req.user._id },
+                        {
+                            $set: {
+                                Firstname: req.body.firstname,
+                                Lastname: req.body.lastname,
+                                Username: req.body.username,
+                                Email: req.body.email,
+                                Avatar: avatar,
+                            },
+                        },
+                        (err, data) => {
+                            if (err) {
+                                //omit
+                            } else {
+                                res.status(200).json(data); // success
+                            }
+                        }
+                    );
+                }
             });
         }
     },
 ];
 
+/*
 //FIXME haven't test
 exports.upload_post = async (req, res, next) => {
+    console.log(req.files);
     try {
         if (!req.files) {
+            //req.files
             res.send({
                 status: false,
                 message: 'No file uploaded',
@@ -479,6 +504,85 @@ exports.upload_post = async (req, res, next) => {
             });
         }
     } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+};
+*/
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/images/');
+    },
+    filename: (req, file, cb) => {
+        const fileName = file.originalname.toLowerCase().split(' ').join('-');
+        cb(null, uuidv4() + '-' + fileName);
+    },
+});
+
+var upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (
+            file.mimetype == 'image/png' ||
+            file.mimetype == 'image/jpg' ||
+            file.mimetype == 'image/jpeg'
+        ) {
+            cb(null, true);
+        } else {
+            cb(null, false);
+            return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+        }
+    },
+});
+
+// User model
+exports.upload_post = [
+    upload.single('picture'),
+    async (req, res, next) => {
+        try {
+            upload.single('picture');
+            //const url = 'http://' + req.get('host') + '/images/'; //FIXMEmaybe need adjustment
+            const url = '/images/';
+            req.img = url + req.file.filename;
+            //res.status(200).send(req.img);
+        } catch (err) {
+            console.log(err);
+            res.status(500).send(err);
+        }
+        return next();
+    },
+];
+
+exports.upload_avatar_post = (req, res, next) => {
+    try {
+        //const url = 'http://' + req.get('host') + '/images/'; //FIXMEmaybe need adjustment
+        User.findOneAndUpdate(
+            { _id: req.user._id },
+            {
+                $set: {
+                    Avatar: req.img,
+                },
+            },
+            (err, data) => {
+                if (err) {
+                    //omit
+                } else {
+                    res.status(200).json(req.img); // success
+                }
+            }
+        );
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+};
+
+exports.upload_posts_post = (req, res, next) => {
+    try {
+        res.status(200).json(req.img); // success
+    } catch (err) {
+        console.log(err);
         res.status(500).send(err);
     }
 };

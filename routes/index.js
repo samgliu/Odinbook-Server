@@ -9,6 +9,7 @@ const refreshAuthMiddleware = require('../middleware/refreshTokenAuth');
 const getUserMiddleware = require('../middleware/getUser');
 const postAuthValidatorMiddleware = require('../middleware/postAuthValidator');
 const cmtAuthValidatorMiddlerware = require('../middleware/cmtAuthValidator');
+
 /* GET home page. */
 router.get(
     '/',
@@ -78,17 +79,28 @@ router.get(
     getUserMiddleware.getUser,
     userController.friend_reject_get
 );
+// update profile data
 router.put(
     '/update',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
     userController.update_put
 );
+// file upload
 router.post(
     '/upload',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    userController.upload_post
+    userController.upload_post,
+    userController.upload_avatar_post
+);
+// file upload for new post
+router.post(
+    '/upload-post',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.upload_post,
+    userController.upload_posts_post
 );
 
 /* Post Routes */

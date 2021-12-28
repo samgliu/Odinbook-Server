@@ -154,7 +154,11 @@ exports.create_post_self_post = [
                 //    console.log('unauthorized');
                 //res.status(401).json({ msg: 'unauthorized' });
                 //}
-                const picture = req.body.picture ? req.body.picture : '';
+                let picture = '';
+                if (req.body.picture) {
+                    picture = req.body.picture.replaceAll('&#x2F;', '/');
+                }
+                console.log(picture);
                 const post = new Post({
                     Content: req.body.content,
                     Author: req.user,
@@ -171,6 +175,7 @@ exports.create_post_self_post = [
                             { $push: { Posts: rest } },
                             { returnOriginal: false }
                         ).populate('Posts');
+                        console.log(rest);
                         res.status(200).json(rest);
                     }
                 });
@@ -204,7 +209,10 @@ exports.create_post_post = [
                 const target = await User.findOne({
                     Username: req.params.targetUsername,
                 });
-                const picture = req.body.picture ? req.body.picture : '';
+                let picture = '';
+                if (req.body.picture) {
+                    picture = req.body.picture.replaceAll('&#x2F;', '/');
+                }
                 const post = new Post({
                     Content: req.body.content,
                     Author: req.user,
@@ -227,6 +235,7 @@ exports.create_post_post = [
                             { $push: { receivedPosts: rest } },
                             { returnOriginal: false }
                         ).populate('Posts');
+
                         res.status(200).json(rest);
                     }
                 });

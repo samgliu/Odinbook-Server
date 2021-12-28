@@ -6,10 +6,12 @@
 
 # TODO List
 
+-   css
 -   chat
 -   Avatar upload
 -   picture upload
--   notification
+-   FB/Google auth sign up/log in
+-   notification?
 
 # Built With
 
