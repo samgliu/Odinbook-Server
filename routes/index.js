@@ -4,6 +4,7 @@ const router = express.Router();
 const userController = require('../controllers/UserController');
 const postController = require('../controllers/PostController');
 const commentController = require('../controllers/CommentController');
+const chatController = require('../controllers/ChatController');
 const authMiddleware = require('../middleware/auth');
 const refreshAuthMiddleware = require('../middleware/refreshTokenAuth');
 const getUserMiddleware = require('../middleware/getUser');
@@ -231,5 +232,15 @@ router.get(
     getUserMiddleware.getUser,
     commentController.cmt_unlike_get
 );
+
+/* room */
+router.post(
+    '/room',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    chatController.room_post
+);
+
+/* message */
 
 module.exports = router;

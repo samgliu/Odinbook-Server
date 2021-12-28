@@ -2,17 +2,21 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var RoomSchema = new Schema({
-    LastMessage: {
-        type: Schema.Types.ObjectId,
-        ref: 'Message',
+var MessageSchema = new Schema({
+    Text: {
+        type: String,
+        required: true,
     },
-    Members: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-        },
-    ],
+    SendBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    RoomId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Room',
+        required: true,
+    },
     Timestamp: {
         type: Date,
         required: true,
@@ -24,4 +28,4 @@ RoomSchema.virtual('formatted_time').get(function () {
 });
 
 //Export model
-module.exports = mongoose.model('Room', RoomSchema);
+module.exports = mongoose.model('Message', MessageSchema);
