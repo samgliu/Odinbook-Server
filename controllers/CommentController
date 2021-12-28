@@ -15,9 +15,12 @@ exports.create_comment_post = [
         if (!errors.isEmpty()) {
             res.status(500).json({ msg: 'validation error' });
         } else {
-            const picture = req.body.picture ? req.body.picture : '';
+            let picture = '';
+            if (req.body.picture) {
+                picture = req.body.picture.replaceAll('&#x2F;', '/');
+            }
             const post = await Post.findById(req.params.id).exec();
-            console.log(post);
+            //console.log(post);
             const comment = new Comment({
                 Content: req.body.content,
                 Picture: picture,
@@ -38,6 +41,7 @@ exports.create_comment_post = [
                                     msg: 'post find error',
                                 });
                             } else {
+                                //console.log(rest);
                                 res.status(200).json(rest);
                             }
                         }

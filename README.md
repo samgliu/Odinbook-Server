@@ -4,14 +4,15 @@
 
     OdinBook server
 
+# Status
+
+-   Working on
+
 # TODO List
 
 -   css
 -   chat
--   Avatar upload
--   picture upload
 -   FB/Google auth sign up/log in
--   notification?
 
 # Built With
 
@@ -19,12 +20,13 @@
 -   Express
 -   passportJS
 -   mongoDB
+-   multer
 
 # Feature:
 
 -   sign up/in/out
 -   Post/Comment/Like add/delete with picture
--   Friend with other user
+-   Friend with other users
 -   Profile Edit
 
 # config:
