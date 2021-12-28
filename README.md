@@ -9,8 +9,6 @@
 -   chat
 -   Avatar upload
 -   picture upload
--   friend application
--   like
 -   notification
 
 # Built With

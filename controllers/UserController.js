@@ -109,7 +109,8 @@ exports.profile_get = async (req, res, next) => {
                 },
             ],
             select: '-Password -Friends -FriendRequests',
-        });
+        })
+        .populate('Friends', '-Password -Friends -FriendRequests');
     //.populate('Posts');
     //console.log(userProfileData);
     res.json(userProfileData);
@@ -263,7 +264,7 @@ exports.logout_get = (req, res) => {
         .json('cookie cleared');
 };
 
-exports.friend_request_put = async (req, res, next) => {
+exports.friend_request_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.tid };
@@ -277,7 +278,27 @@ exports.friend_request_put = async (req, res, next) => {
     }
 };
 
-exports.friend_accept_put = async (req, res, next) => {
+exports.unfriend_get = async (req, res, next) => {
+    try {
+        const currentUser = req.user;
+        const filter = { _id: req.params.tid };
+        const update = { $pull: { Friends: req.user._id } };
+        const targetUser = await User.findOneAndUpdate(filter, update, {
+            returnOriginal: false,
+        });
+        // update this user Friends list
+        const thisFilter = { _id: req.user._id };
+        const thisUpdate = { $pull: { Friends: req.params.tid } };
+        const thisUser = await User.findOneAndUpdate(thisFilter, thisUpdate, {
+            returnOriginal: false,
+        });
+        res.status(200).json({ msg: 'success' });
+    } catch (err) {
+        res.status(400).json({ msg: 'error' });
+    }
+};
+
+exports.friend_accept_get = async (req, res, next) => {
     try {
         const targetUser = await User.findOneAndUpdate(
             { _id: req.params.tid },
@@ -288,6 +309,25 @@ exports.friend_accept_put = async (req, res, next) => {
         const currentUpdate = {
             $pull: { FriendRequests: req.params.tid },
             $push: { Friends: targetUser },
+        };
+        const currentUser = await User.findOneAndUpdate(
+            currentfilter,
+            currentUpdate,
+            {
+                returnOriginal: false,
+            }
+        );
+        res.status(200).json({ msg: 'success', user: targetUser });
+    } catch (err) {
+        res.status(400).json({ msg: 'error' });
+    }
+};
+
+exports.friend_reject_get = async (req, res, next) => {
+    try {
+        const currentfilter = { _id: req.user.id };
+        const currentUpdate = {
+            $pull: { FriendRequests: req.params.tid },
         };
         const currentUser = await User.findOneAndUpdate(
             currentfilter,

@@ -50,19 +50,33 @@ router.get(
     getUserMiddleware.getUser,
     userController.user_search_get
 );
-router.put(
+router.get(
     // make friend with target id
     '/:tid/request-friend',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    userController.friend_request_put
+    userController.friend_request_get
 );
-router.put(
+router.get(
+    // make friend with target id
+    '/:tid/unfriend',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.unfriend_get
+);
+router.get(
     // accept friend with target id
     '/:tid/accept-friend',
     authMiddleware.verifyToken,
     getUserMiddleware.getUser,
-    userController.friend_accept_put
+    userController.friend_accept_get
+);
+router.get(
+    // accept friend with target id
+    '/:tid/reject-friend',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.friend_reject_get
 );
 router.put(
     '/update',
