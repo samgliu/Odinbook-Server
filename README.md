@@ -20,6 +20,7 @@
 -   Express
 -   passportJS
 -   mongoDB
+-   socket.io
 -   multer
 
 # Feature:

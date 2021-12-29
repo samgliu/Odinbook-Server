@@ -98,6 +98,93 @@ app.use(
     })
 );
 
+//beginning of socket.io===============
+const io = require('socket.io')(8900, {
+    cors: {
+        origin: 'http://localhost:3000',
+    },
+});
+
+let users = [];
+
+const addUser = (userId, socketId) => {
+    !users.some((user) => {
+        if (user.userId === userId) {
+            // fixing when freshed page which changes the socketId
+            user.socketId = socketId;
+            return true;
+        }
+    }) && users.push({ userId, socketId });
+    console.log(users);
+};
+
+const removeUser = (socketId) => {
+    users = users.filter((user) => users.socketId !== socketId);
+    console.log(users);
+};
+
+const getUser = async (userId) => {
+    theUser = users.find((user) => user.userId === userId);
+    return theUser;
+};
+
+io.on('connection', (socket) => {
+    console.log('A user connected.');
+    // connect userId and socketId
+    console.log(socket.id);
+    socket.on('addUser', (userId) => {
+        addUser(userId, socket.id);
+        io.emit('getUsers', users);
+    });
+
+    // send and get message
+    socket.on('sendMessage', ({ senderId, receiverId, text }) => {
+        console.log(socket.id);
+        const user = getUser(receiverId).then((theUser) => {
+            console.log('users');
+            console.log(users);
+            console.log('user');
+            console.log(theUser);
+            console.log({ senderId, receiverId, text });
+            //console.log(theUser.socketId);
+
+            if (theUser && theUser.socketId) {
+                console.log(theUser.socketId);
+                socket.broadcast.to(theUser.socketId).emit('getMessage', {
+                    receiverId: receiverId,
+                    senderId: senderId,
+                    text: senderId,
+                });
+            }
+
+            /*
+            if (theUser.socketId) {
+                io.to(theUser.socketId).emit('getMessage', {
+                    senderId,
+                    text,
+                });
+            }
+            */
+
+            //group emit
+            /*
+            io.emit('getMessage', {
+                receiverId: receiverId,
+                senderId: senderId,
+                text: senderId,
+            });*/
+        });
+    });
+
+    // disconnect
+    socket.on('disconnet', () => {
+        console.log('A user disconnected');
+        removeUser(socket.id);
+        io.emit('getUsers', users);
+    });
+});
+//end of socket.io===============
+
 // passport
 app.use(passport.initialize());
 app.use(passport.session());

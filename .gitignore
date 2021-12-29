@@ -36,3 +36,6 @@ benchmarks/graphs
 *.key
 
 *.pem
+
+socket
+socket/*
