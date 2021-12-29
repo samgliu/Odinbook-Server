@@ -8,6 +8,7 @@ exports.verifyToken = (req, res, next) => {
         req.body.accessToken ||
         req.query.accessToken ||
         req.headers['x-access-token'];
+    console.log('accessToken in verify Token');
     console.log(accessToken);
     if (!accessToken) {
         return res.status(403).send('A token is required for authentication');

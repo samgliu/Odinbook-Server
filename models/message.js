@@ -23,9 +23,16 @@ var MessageSchema = new Schema({
     },
 });
 
-RoomSchema.virtual('formatted_time').get(function () {
+MessageSchema.virtual('formatted_time').get(function () {
     return format(new Date(this.timestamp), "dd MMMM yyyy ' at ' HH:mm");
 });
+
+// filter Password field
+MessageSchema.methods.toJSON = function () {
+    var obj = this.toObject(); //or var obj = this;
+    delete obj.SendBy.Password;
+    return obj;
+};
 
 //Export model
 module.exports = mongoose.model('Message', MessageSchema);

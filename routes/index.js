@@ -242,5 +242,11 @@ router.post(
 );
 
 /* message */
+router.post(
+    '/send-message',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    chatController.message_post
+);
 
 module.exports = router;

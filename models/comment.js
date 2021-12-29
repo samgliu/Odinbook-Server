@@ -38,5 +38,12 @@ CommentSchema.virtual('formatted_time').get(function () {
     return format(new Date(this.timestamp), "dd MMMM yyyy ' at ' HH:mm");
 });
 
+// filter Password field
+CommentSchema.methods.toJSON = function () {
+    var obj = this.toObject(); //or var obj = this;
+    delete obj.Author.Password;
+    return obj;
+};
+
 //Export model
 module.exports = mongoose.model('Comment', CommentSchema);
