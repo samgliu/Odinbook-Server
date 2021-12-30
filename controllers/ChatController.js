@@ -89,7 +89,7 @@ exports.message_post = [
     // Validate and sanitize the name field.
     body('receiverId', 'receiverId required').isLength({ min: 10 }).escape(),
     body('senderId', 'senderId required').isLength({ min: 10 }).escape(),
-    body('text', 'Text required').isLength({ min: 1 }).escape(),
+    body('text', 'Text required').isLength({ min: 1 }),
 
     async (req, res, next) => {
         const errors = validationResult(req);

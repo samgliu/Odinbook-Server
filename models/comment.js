@@ -7,7 +7,7 @@ var CommentSchema = new Schema({
         type: String,
         required: true,
         minLength: 1,
-        maxLength: 200,
+        maxLength: 250,
     },
     Picture: {
         type: String,

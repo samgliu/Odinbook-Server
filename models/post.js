@@ -7,7 +7,7 @@ var PostSchema = new Schema({
         type: String,
         required: true,
         minLength: 1,
-        maxLength: 200,
+        maxLength: 1000,
     },
     Author: {
         type: Schema.Types.ObjectId,

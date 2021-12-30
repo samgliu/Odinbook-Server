@@ -140,8 +140,9 @@ exports.create_post_get = function (req, res, next) {
 /* create post under userself */
 exports.create_post_self_post = [
     // Validate and sanitize the name field.
-    body('content', 'Content required').isLength({ min: 1 }).escape(),
-    body('picture').escape(),
+    body('content', 'Content required').trim().isLength({ min: 1 }),
+    body('content', 'Max length exceeded').trim().isLength({ max: 1000 }),
+    body('picture'),
 
     async (req, res, next) => {
         const errors = validationResult(req);
