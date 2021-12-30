@@ -129,9 +129,9 @@ const getUser = async (userId) => {
 };
 
 io.on('connection', (socket) => {
-    console.log('A user connected.');
+    console.log('A user connected with ID: ' + socket.id);
     // connect userId and socketId
-    console.log(socket.id);
+    console.log(' %s sockets connected', io.engine.clientsCount);
     socket.on('addUser', (userId) => {
         addUser(userId, socket.id);
         io.emit('getUsers', users);
@@ -153,7 +153,7 @@ io.on('connection', (socket) => {
                 socket.broadcast.to(theUser.socketId).emit('getMessage', {
                     receiverId: receiverId,
                     senderId: senderId,
-                    text: senderId,
+                    text: text,
                 });
             }
 

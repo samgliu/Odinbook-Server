@@ -11,7 +11,6 @@
 # TODO List
 
 -   css
--   chat
 -   FB/Google auth sign up/log in
 
 # Built With
@@ -25,10 +24,11 @@
 
 # Feature:
 
--   sign up/in/out
+-   Sign up/in/out
 -   Post/Comment/Like add/delete with picture
 -   Friend with other users
 -   Profile Edit
+-   Real time chat
 
 # config:
 
