@@ -297,7 +297,7 @@ exports.like_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.id };
-        const update = { Likes: currentUser };
+        const update = { $push: { Likes: currentUser } };
         const newPost = await Post.findOneAndUpdate(filter, update, {
             returnOriginal: false,
         });

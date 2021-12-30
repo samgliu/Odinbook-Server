@@ -134,7 +134,7 @@ exports.cmt_like_get = async (req, res, next) => {
     try {
         const currentUser = req.user;
         const filter = { _id: req.params.cid };
-        const update = { Likes: currentUser };
+        const update = { $push: { Likes: currentUser } };
         const newCmt = await Comment.findOneAndUpdate(filter, update, {
             returnOriginal: false,
         });
