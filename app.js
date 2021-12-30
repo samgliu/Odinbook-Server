@@ -136,9 +136,9 @@ const io = require('socket.io')(socketPort, {
             'http://172.19.133.104:3000',
             'https://samgliu.github.io',
             'http://samgliu.github.io',
-            'ws://samgliu.github.io',
         ],
-        secure: true,
+        //secure: true,
+        //credentials: true,
     },
 });
 
