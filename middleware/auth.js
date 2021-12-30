@@ -11,7 +11,9 @@ exports.verifyToken = (req, res, next) => {
     //console.log('accessToken in verify Token');
     //console.log(accessToken);
     if (!accessToken) {
-        return res.status(403).send('A token is required for authentication');
+        return res
+            .status(403)
+            .send('Verification fail! A token is required for authentication');
     }
     try {
         const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_KEY, {
