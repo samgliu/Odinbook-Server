@@ -10,7 +10,28 @@ var cookieParser = require('cookie-parser');
 const session = require('express-session');
 require('./config/passport');
 require('dotenv').config();
+var socketPort = normalizePort(process.env.SOCKET_PORT || '5000');
 require('./config/database').connect();
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
 
 var indexRouter = require('./routes/index');
 
@@ -102,7 +123,7 @@ app.use(
 );
 
 //beginning of socket.io===============
-const io = require('socket.io')(8900, {
+const io = require('socket.io')(socketPort, {
     cors: {
         // white lists
         origin: [

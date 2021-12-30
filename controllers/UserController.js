@@ -344,16 +344,21 @@ exports.friend_reject_get = async (req, res, next) => {
 
 exports.user_search_get = [
     // Validate and sanitize the name field.
-    check('searchkey', 'Content required').trim().isLength({ min: 1 }).escape(),
+    check('searchKey', 'searchKey required')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
 
     async (req, res, next) => {
+        console.log(req.query.searchKey);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            console.log(errors);
             res.status(500).json({ msg: 'validation error' });
         } else {
-            const searchkey = req.query.searchkey;
+            const searchKey = req.query.searchKey;
             const userData = await User.find(
-                { Username: { $regex: `${searchkey}`, $options: 'i' } },
+                { Username: { $regex: `${searchKey}`, $options: 'i' } },
                 (err, docs) => {
                     if (err) {
                         res.status(404).json(err);
