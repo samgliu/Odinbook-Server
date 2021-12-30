@@ -142,38 +142,36 @@ const getUser = async (userId) => {
     return theUser;
 };
 
-io.on(
-    'connection',
-    (socket) => {
-        console.log('A user connected with ID: ' + socket.id);
-        // connect userId and socketId
-        console.log(' %s sockets connected', io.engine.clientsCount);
-        socket.on('addUser', (userId) => {
-            addUser(userId, socket.id);
-            io.emit('getUsers', users);
-        });
+io.on('connection', (socket) => {
+    console.log('A user connected with ID: ' + socket.id);
+    // connect userId and socketId
+    console.log(' %s sockets connected', io.engine.clientsCount);
+    socket.on('addUser', (userId) => {
+        addUser(userId, socket.id);
+        io.emit('getUsers', users);
+    });
 
-        // send and get message
-        socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-            console.log(socket.id);
-            const user = getUser(receiverId).then((theUser) => {
-                console.log('users');
-                console.log(users);
-                console.log('user');
-                console.log(theUser);
-                console.log({ senderId, receiverId, text });
-                //console.log(theUser.socketId);
+    // send and get message
+    socket.on('sendMessage', ({ senderId, receiverId, text }) => {
+        console.log(socket.id);
+        const user = getUser(receiverId).then((theUser) => {
+            console.log('users');
+            console.log(users);
+            console.log('user');
+            console.log(theUser);
+            console.log({ senderId, receiverId, text });
+            //console.log(theUser.socketId);
 
-                if (theUser && theUser.socketId) {
-                    console.log(theUser.socketId);
-                    socket.broadcast.to(theUser.socketId).emit('getMessage', {
-                        receiverId: receiverId,
-                        senderId: senderId,
-                        text: text,
-                    });
-                }
+            if (theUser && theUser.socketId) {
+                console.log(theUser.socketId);
+                socket.broadcast.to(theUser.socketId).emit('getMessage', {
+                    receiverId: receiverId,
+                    senderId: senderId,
+                    text: text,
+                });
+            }
 
-                /*
+            /*
             if (theUser.socketId) {
                 io.to(theUser.socketId).emit('getMessage', {
                     senderId,
@@ -182,25 +180,23 @@ io.on(
             }
             */
 
-                //group emit
-                /*
+            //group emit
+            /*
             io.emit('getMessage', {
                 receiverId: receiverId,
                 senderId: senderId,
                 text: senderId,
             });*/
-            });
         });
+    });
 
-        // disconnect
-        socket.on('disconnet', () => {
-            console.log('A user disconnected');
-            removeUser(socket.id);
-            io.emit('getUsers', users);
-        });
-    },
-    { secure: true }
-);
+    // disconnect
+    socket.on('disconnet', () => {
+        console.log('A user disconnected');
+        removeUser(socket.id);
+        io.emit('getUsers', users);
+    });
+});
 //end of socket.io===============
 
 // passport
