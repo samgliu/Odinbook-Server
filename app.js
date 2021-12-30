@@ -57,13 +57,13 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 */
-/*
+
 app.use(function secure(req, res, next) {
     req.headers['x-forwarded-proto'] = 'https';
     next();
 });
-*/
 
+/*
 app.get('*', function (req, res, next) {
     if (req.get('x-forwarded-proto') != 'https') {
         res.set('x-forwarded-proto', 'https');
@@ -72,6 +72,7 @@ app.get('*', function (req, res, next) {
         next();
     }
 });
+*/
 
 app.use(function (req, res, next) {
     var allowedDomains = [
@@ -137,7 +138,7 @@ const io = require('socket.io')(socketPort, {
             'http://samgliu.github.io',
             'ws://samgliu.github.io',
         ],
-        credentials: true,
+        secure: true,
     },
 });
 
