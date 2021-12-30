@@ -104,7 +104,18 @@ app.use(
 //beginning of socket.io===============
 const io = require('socket.io')(8900, {
     cors: {
-        origin: 'http://localhost:3000',
+        // white lists
+        origin: [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://127.0.0.1:3000',
+            'http://172.19.133.104:3001',
+            'http://172.19.133.104:3000',
+            'https://samgliu.github.io',
+            'http://samgliu.github.io',
+            'ws://samgliu.github.io',
+        ],
+        credentials: true,
     },
 });
 

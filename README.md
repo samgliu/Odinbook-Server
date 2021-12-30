@@ -10,7 +10,6 @@
 
 # TODO List
 
--   css
 -   FB/Google auth sign up/log in
 
 # Built With
