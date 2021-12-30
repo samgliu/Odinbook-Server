@@ -63,7 +63,7 @@ app.use(function secure(req, res, next) {
     next();
 });
 */
-/*
+
 app.get('*', function (req, res, next) {
     if (req.get('x-forwarded-proto') != 'https') {
         res.set('x-forwarded-proto', 'https');
@@ -72,7 +72,7 @@ app.get('*', function (req, res, next) {
         next();
     }
 });
-*/
+
 app.use(function (req, res, next) {
     var allowedDomains = [
         'http://localhost:3000',
@@ -109,7 +109,7 @@ app.use(compression()); // Compress all routes
 app.use(helmet());
 
 app.set('trust proxy', 1); // trusting proxy
-/*
+
 app.use(
     session({
         secret: process.env.SESSION_KEY,
@@ -120,14 +120,6 @@ app.use(
             sameSite: 'none',
             httpOnly: true,
         },
-    })
-);
-*/
-app.use(
-    session({
-        secret: process.env.SESSION_KEY,
-        resave: false,
-        saveUninitialized: true,
     })
 );
 
