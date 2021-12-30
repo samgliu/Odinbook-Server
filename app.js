@@ -57,12 +57,12 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 */
-
+/*
 app.use(function secure(req, res, next) {
     req.headers['x-forwarded-proto'] = 'https';
     next();
 });
-
+*/
 /*
 app.get('*', function (req, res, next) {
     if (req.get('x-forwarded-proto') != 'https') {
@@ -109,6 +109,7 @@ app.use(compression()); // Compress all routes
 app.use(helmet());
 
 app.set('trust proxy', 1); // trusting proxy
+/*
 app.use(
     session({
         secret: process.env.SESSION_KEY,
@@ -119,6 +120,14 @@ app.use(
             sameSite: 'none',
             httpOnly: true,
         },
+    })
+);
+*/
+app.use(
+    session({
+        secret: process.env.SESSION_KEY,
+        resave: false,
+        saveUninitialized: true,
     })
 );
 
