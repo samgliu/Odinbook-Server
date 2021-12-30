@@ -59,6 +59,9 @@ app.use(function (req, res, next) {
         'http://127.0.0.1:3000',
         'http://172.19.133.104:3001',
         'http://172.19.133.104:3000',
+        'https://samgliu.github.io',
+        'http://samgliu.github.io',
+        'ws://samgliu.github.io',
     ];
     var origin = req.headers.origin;
     if (allowedDomains.indexOf(origin) > -1) {
