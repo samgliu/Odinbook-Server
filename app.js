@@ -125,6 +125,8 @@ app.use(
 );
 
 //beginning of socket.io===============
+var cors = require('cors');
+var socketPort = process.env.PORT || 5000;
 const io = require('socket.io')(socketPort, {
     cors: {
         // white lists
@@ -136,9 +138,13 @@ const io = require('socket.io')(socketPort, {
             'http://172.19.133.104:3000',
             'https://samgliu.github.io',
             'http://samgliu.github.io',
+            'nameless-harbor-96114.herokuapp.com',
+            'ws://nameless-harbor-96114.herokuapp.com',
+            'http://nameless-harbor-96114.herokuapp.com',
+            'https://nameless-harbor-96114.herokuapp.com',
         ],
-        secure: true,
-        credentials: true,
+        //secure: true,
+        //credentials: true,
     },
 });
 
