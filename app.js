@@ -125,6 +125,7 @@ app.use(
 );
 
 //beginning of socket.io===============
+/*
 var cors = require('cors');
 var socketPort = process.env.PORT || 5000;
 const io = require('socket.io')(socketPort, {
@@ -209,14 +210,14 @@ io.on('connection', (socket) => {
             }
             */
 
-            //group emit
-            /*
+//group emit
+/*
             io.emit('getMessage', {
                 receiverId: receiverId,
                 senderId: senderId,
                 text: senderId,
             });*/
-        });
+/*        });
     });
 
     // disconnect
@@ -227,7 +228,7 @@ io.on('connection', (socket) => {
     });
 });
 //end of socket.io===============
-
+*/
 // passport
 app.use(passport.initialize());
 app.use(passport.session());
