@@ -84,6 +84,10 @@ app.use(function (req, res, next) {
         'https://samgliu.github.io',
         'http://samgliu.github.io',
         'ws://samgliu.github.io',
+        'samgliu.me',
+        'https://samgliu.me',
+        'https://samgliu.me',
+        'ws://samgliu.me',
     ];
     var origin = req.headers.origin;
     if (allowedDomains.indexOf(origin) > -1) {

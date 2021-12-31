@@ -17,7 +17,7 @@ exports.cmtAuthValidator = async (req, res, next) => {
 
         if (String(uid) === String(post.Author._id)) {
             //return res.status(404).send('not owner');
-            console.log('is poster');
+            //console.log('is poster');
             isPoster = true;
         }
         const cmt = await Comment.findOne({ _id: cid }).populate(
@@ -28,7 +28,7 @@ exports.cmtAuthValidator = async (req, res, next) => {
         //console.log(String(uid));
         //console.log(String(cmt.Author._id));
         if (String(uid) === String(cmt.Author._id)) {
-            console.log('is author');
+            //console.log('is author');
             isAuthor = true;
             //return res.status(404).send('not owner');
         }
