@@ -4,16 +4,16 @@
 
     OdinBook server
 
-    Server repository: https://github.com/samgliu/Odinbook
-    socket.io server: https://github.com/samgliu/Odinbook-socketio-server
-    Server API Demo: https://fast-depths-49064.herokuapp.com/
+# Repositories
 
-    Client repository: https://github.com/samgliu/Odinbook-Client
-    Client Demo: https://samgliu.github.io/Odinbook-Client/
+Server repository: https://github.com/samgliu/Odinbook
+socket.io server: https://github.com/samgliu/Odinbook-socketio-server
+Server API Demo: https://fast-depths-49064.herokuapp.com/
+
+Client repository: https://github.com/samgliu/Odinbook-Client
+Client Demo: https://samgliu.github.io/Odinbook-Client/
 
 # Status
-
--   Working on
 
 # TODO List
 
@@ -31,10 +31,12 @@
 # Feature:
 
 -   Sign up/in/out
--   Post/Comment/Like add/delete with picture
+-   Post/Comment/Like (add/delete with picture)
 -   Friend with other users
--   Profile Edit
--   Real time chat
+-   Profile and Avartar Edit
+-   Real time chatting system with notifications
+-   responsive view
+-   Infinite scrolling posts
 
 # config:
 

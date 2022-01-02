@@ -7,6 +7,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const refreshTokenList = {};
+const postsList = {};
+const {
+    extractPost,
+    sortPosts,
+    returnPagePosts,
+} = require('../lib/postsProcess');
 require('dotenv').config();
 
 /* userself posts get */
@@ -130,6 +136,155 @@ exports.posts_get = async (req, res, next) => {
             select: '-Password -Friends -FriendRequests',
         });
     res.json(userData);
+};
+
+/* userself page posts get */
+exports.page_posts_get = async (req, res, next) => {
+    try {
+        if (req.query.page == 1 || !postsList[req._id]) {
+            const userData = await User.findById(req.decoded.id)
+                .populate({
+                    path: 'Friends',
+                    populate: {
+                        path: 'Posts',
+                        populate: [
+                            {
+                                path: 'Author',
+                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                            },
+                            {
+                                path: 'Comments',
+                                populate: [
+                                    {
+                                        path: 'Author',
+                                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                    },
+                                    {
+                                        path: 'Likes',
+                                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                    },
+                                    {
+                                        path: 'Post',
+                                        populate: [
+                                            {
+                                                path: 'Author',
+                                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                            },
+                                        ],
+                                        select: 'Author',
+                                    },
+                                ],
+                            },
+                            {
+                                path: 'Likes',
+                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                            },
+                        ],
+                        select: '-Password -Friends -FriendRequests',
+                    },
+                    select: '-Password -Friends -FriendRequests',
+                })
+                .populate(
+                    'FriendRequests',
+                    '-Password -Friends -FriendRequests'
+                )
+                .populate({
+                    path: 'receivedPosts',
+                    populate: [
+                        {
+                            path: 'Author',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                        {
+                            path: 'Comments',
+                            populate: [
+                                {
+                                    path: 'Author',
+                                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                },
+                                {
+                                    path: 'Likes',
+                                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                },
+                                {
+                                    path: 'Post',
+                                    populate: [
+                                        {
+                                            path: 'Author',
+                                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                        },
+                                    ],
+                                    select: 'Author',
+                                },
+                            ],
+                        },
+                        {
+                            path: 'Likes',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                    ],
+                    select: '-Password -Friends -FriendRequests',
+                })
+                .populate({
+                    path: 'Posts',
+                    populate: [
+                        {
+                            path: 'Author',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                        {
+                            path: 'Comments',
+                            populate: [
+                                {
+                                    path: 'Author',
+                                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                },
+                                {
+                                    path: 'Likes',
+                                    select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                },
+                                {
+                                    path: 'Post',
+                                    populate: [
+                                        {
+                                            path: 'Author',
+                                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                                        },
+                                    ],
+                                    select: 'Author',
+                                },
+                            ],
+                        },
+                        {
+                            path: 'Likes',
+                            select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                        },
+                    ],
+
+                    select: '-Password -Friends -FriendRequests',
+                });
+            const returnList = await extractPost(req.user._id, userData);
+            const sortedList = await sortPosts(returnList);
+            postsList[req._id] = sortedList;
+            const returnData = await returnPagePosts(
+                sortedList,
+                req.query.page,
+                req.query.limit
+            );
+            res.json(returnData);
+        } else {
+            const returnList = postsList[req._id];
+            const returnData = await returnPagePosts(
+                returnList,
+                req.query.page,
+                req.query.limit
+            );
+            res.json(returnData);
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(404).json('Invalid request.');
+    }
 };
 
 /* create new */

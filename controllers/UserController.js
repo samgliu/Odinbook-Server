@@ -9,6 +9,12 @@ const refreshTokenList = {};
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
+const profilePostsList = {};
+const {
+    extractProfilePost,
+    sortPosts,
+    returnPagePosts,
+} = require('../lib/postsProcess');
 
 function getNewAccessToken(id) {
     return jwt.sign(
@@ -114,6 +120,95 @@ exports.profile_get = async (req, res, next) => {
     //.populate('Posts');
     //console.log(userProfileData);
     res.json(userProfileData);
+};
+
+//page_profile_get
+exports.page_profile_get = async (req, res, next) => {
+    //console.log(req.decoded);
+    try {
+        const userProfileData = await User.findOne({
+            Username: req.params.username,
+        })
+            .populate({
+                path: 'receivedPosts',
+                populate: [
+                    {
+                        path: 'Author',
+                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                    },
+                    {
+                        path: 'Comments',
+                        populate: [
+                            {
+                                path: 'Author',
+                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                            },
+                            {
+                                path: 'Likes',
+                            },
+                        ],
+                    },
+                    {
+                        path: 'Likes',
+                    },
+                ],
+                select: '-Password -Friends -FriendRequests',
+            })
+            .populate({
+                path: 'Posts',
+                populate: [
+                    {
+                        path: 'Author',
+                        select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                    },
+                    {
+                        path: 'Comments',
+                        populate: [
+                            {
+                                path: 'Author',
+                                select: '-Password -Friends -FriendRequests -Posts -receivedPosts',
+                            },
+                            {
+                                path: 'Likes',
+                            },
+                        ],
+                    },
+                    {
+                        path: 'Likes',
+                    },
+                ],
+                select: '-Password -Friends -FriendRequests',
+            })
+            .populate('Friends', '-Password -Friends -FriendRequests');
+        if (
+            req.query.page == 1 ||
+            !profilePostsList[req._id + userProfileData._id]
+        ) {
+            const returnList = await extractProfilePost(
+                req.user._id,
+                userProfileData
+            );
+            const sortedList = await sortPosts(returnList);
+            profilePostsList[req._id + userProfileData._id] = sortedList;
+            const returnData = await returnPagePosts(
+                sortedList,
+                req.query.page,
+                req.query.limit
+            );
+            res.json(returnData);
+        } else {
+            const returnList = profilePostsList[req._id + userProfileData._id];
+            const returnData = await returnPagePosts(
+                returnList,
+                req.query.page,
+                req.query.limit
+            );
+            res.json(returnData);
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(404).json('Invalid request.');
+    }
 };
 
 /* sign_up */

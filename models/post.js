@@ -38,6 +38,12 @@ var PostSchema = new Schema({
         type: Date,
         required: true,
     },
+    isAuth: {
+        type: Boolean,
+    },
+    isLiked: {
+        type: Boolean,
+    },
 });
 /*
 postSchema.virtual('url').get(function(){

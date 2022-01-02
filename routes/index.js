@@ -34,6 +34,15 @@ router.get(
     getUserMiddleware.getUser,
     userController.profile_get
 );
+
+// get profile page version for infinite scrolling
+router.get(
+    '/:username/page_profile',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    userController.page_profile_get
+);
+
 router.get('/signup', userController.signup_get);
 router.post('/signup', userController.signup_post);
 router.get('/signin', userController.signin_get);
@@ -111,6 +120,15 @@ router.get(
     getUserMiddleware.getUser,
     postController.posts_get
 );
+
+// page posts for infinite scrolling
+router.get(
+    '/page_posts',
+    authMiddleware.verifyToken,
+    getUserMiddleware.getUser,
+    postController.page_posts_get
+);
+
 router.get(
     '/create-post',
     authMiddleware.verifyToken,
