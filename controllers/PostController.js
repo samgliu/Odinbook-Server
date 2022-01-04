@@ -402,9 +402,10 @@ exports.create_post_post = [
     },
 ];
 
-/* get single post */
+/* get single post
 exports.post_get = async (req, res, next) => {
     try {
+        console.log(req.params.id);
         const post = await Post.findById(req.params.id)
             .populate('Author')
             .populate('Comments')
@@ -415,6 +416,7 @@ exports.post_get = async (req, res, next) => {
         res.status(404).json({ msg: 'Not Found' });
     }
 };
+ */
 
 /* verify homepage single post auth*/
 exports.post_auth_get = async (req, res, next) => {

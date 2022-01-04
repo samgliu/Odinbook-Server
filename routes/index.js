@@ -146,12 +146,7 @@ router.post(
     getUserMiddleware.getUser,
     postController.create_post_post
 );
-router.get(
-    '/:id',
-    authMiddleware.verifyToken,
-    getUserMiddleware.getUser,
-    postController.post_get
-);
+
 // only for homepage post verification
 router.get(
     '/:id/auth',
