@@ -6,7 +6,7 @@
 
 # Repositories
 
-Server repository: https://github.com/samgliu/Odinbook  
+Server repository: https://github.com/samgliu/Odinbook-Server  
 socket.io server: https://github.com/samgliu/Odinbook-socketio-server  
 Server API Demo: https://fast-depths-49064.herokuapp.com/
 
