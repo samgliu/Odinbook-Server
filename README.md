@@ -2,6 +2,10 @@
 
 # Description
 
+<div align="center">
+    <img src="/images/odinBook.png" alt="">
+</div>
+
     OdinBook server
 
 # Repositories
@@ -12,12 +16,6 @@ Server API Demo: https://fast-depths-49064.herokuapp.com/
 
 Client repository: https://github.com/samgliu/Odinbook-Client  
 Client Demo: https://samgliu.github.io/Odinbook-Client/
-
-# Status
-
-# TODO List
-
--   FB/Google auth sign up/log in
 
 # Built With
 
@@ -37,7 +35,3 @@ Client Demo: https://samgliu.github.io/Odinbook-Client/
 -   Real time chatting system with notifications
 -   responsive view
 -   Infinite scrolling posts
-
-# config:
-
-# API Usage:
