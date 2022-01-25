@@ -2,11 +2,9 @@
 
 # Description
 
-<div align="center">
-    <img src="/images/odinBook.png" alt="">
-</div>
+[<img alt="" width="400px" src="images/odinBook.png" />](https://samgliu.github.io/Odinbook-Client/)
 
-    OdinBook server
+    OdinBook server for a social web application.
 
 # Repositories
 
