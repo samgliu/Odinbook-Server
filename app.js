@@ -96,6 +96,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use(compression()); // Compress all routes
 app.use(helmet());
 
+
 app.set('trust proxy', 1); // trusting proxy
 
 app.use(
