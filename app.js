@@ -18,19 +18,19 @@ require('./config/database').connect();
  */
 
 function normalizePort(val) {
-    var port = parseInt(val, 10);
+  var port = parseInt(val, 10);
 
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
 
-    if (port >= 0) {
-        // port number
-        return port;
-    }
+  if (port >= 0) {
+    // port number
+    return port;
+  }
 
-    return false;
+  return false;
 }
 
 var indexRouter = require('./routes/index');
@@ -59,8 +59,8 @@ app.use(cors(corsOptions));
 */
 
 app.use(function secure(req, res, next) {
-    req.headers['x-forwarded-proto'] = 'https';
-    next();
+  req.headers['x-forwarded-proto'] = 'https';
+  next();
 });
 
 /*
@@ -75,34 +75,17 @@ app.get('*', function (req, res, next) {
 */
 
 app.use(function (req, res, next) {
-    var allowedDomains = [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://127.0.0.1:3000',
-        'http://172.19.133.104:3001',
-        'http://172.19.133.104:3000',
-        'https://samgliu.github.io',
-        'http://samgliu.github.io',
-        'ws://samgliu.github.io',
-        'samgliu.me',
-        'https://samgliu.me',
-        'https://samgliu.me',
-        'ws://samgliu.me',
-    ];
-    var origin = req.headers.origin;
-    if (allowedDomains.indexOf(origin) > -1) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-    );
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Content-Type, Accept, X-Access-Token, X-Refresh-Token' //,x-access-token
-    );
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Accept, X-Access-Token, X-Refresh-Token' //,x-access-token
+  );
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
 });
 
 app.use(logger('dev'));
@@ -116,16 +99,16 @@ app.use(helmet());
 app.set('trust proxy', 1); // trusting proxy
 
 app.use(
-    session({
-        secret: process.env.SESSION_KEY,
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-            secure: true,
-            sameSite: 'none',
-            httpOnly: true,
-        },
-    })
+  session({
+    secret: process.env.SESSION_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: true,
+      sameSite: 'none',
+      httpOnly: true,
+    },
+  })
 );
 
 //beginning of socket.io===============
@@ -242,29 +225,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    next(createError(404));
+  next(createError(404));
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
 // passport serialize
 passport.serializeUser(function (user, done) {
-    done(null, user.id);
+  done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
-        done(err, user);
-    });
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
 });
 
 module.exports = app;
