@@ -96,8 +96,7 @@ app.use(function (req, res, next) {
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Content-Type, Accept, X-Access-Token, X-Refresh-Token',
-    'access-control-allow-origin',
-    'Access-Control-Allow-Origin' //,x-access-token
+    'access-control-allow-origin'
   );
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
