@@ -6,7 +6,7 @@
 
     OdinBook server for a social web application.
 
-[<h2>Live Demo</h2>](https://samgliu.github.io/Odinbook-Client/)
+- [Live Demo](https://samgliu.github.io/Odinbook-Client/)
 
 # Repositories
 
