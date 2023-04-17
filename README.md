@@ -12,7 +12,7 @@
 
 Server repository: https://github.com/samgliu/Odinbook-Server  
 socket.io server: https://github.com/samgliu/Odinbook-socketio-server  
-Server API Demo: https://odinbook-server-production.up.railway.app
+Server API Demo: https://odinbook-server.onrender.com
 
 Client repository: https://github.com/samgliu/Odinbook-Client  
 Client Demo: https://samgliu.github.io/Odinbook-Client/
